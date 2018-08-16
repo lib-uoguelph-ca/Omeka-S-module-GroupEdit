@@ -1,36 +1,14 @@
 <?php
 namespace GroupEdit;
 
-use Doctrine\ORM\Events;
-use Group\Api\Adapter\GroupAdapter;
-use Group\Controller\Admin\GroupController;
-use Group\Db\Event\Listener\DetachOrphanGroupEntities;
-use Group\Entity\Group;
 use Group\Entity\GroupResource;
 use Group\Entity\GroupUser;
-use Group\Form\Element\GroupSelect;
-use Group\Form\SearchForm;
-use Omeka\Api\Adapter\ItemAdapter;
-use Omeka\Api\Adapter\ItemSetAdapter;
-use Omeka\Api\Adapter\MediaAdapter;
-use Omeka\Api\Adapter\UserAdapter;
-use Omeka\Api\Representation\AbstractEntityRepresentation;
-use Omeka\Api\Representation\ItemRepresentation;
-use Omeka\Api\Representation\ItemSetRepresentation;
-use Omeka\Api\Representation\MediaRepresentation;
-use Omeka\Api\Representation\UserRepresentation;
-use Omeka\Entity\Item;
-use Omeka\Entity\ItemSet;
-use Omeka\Entity\Media;
 use Omeka\Entity\Resource;
-use Omeka\Entity\User;
 use Omeka\Module\AbstractModule;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Auth;
-use Zend\View\Renderer\PhpRenderer;
 
 /**
  * GroupEdit
