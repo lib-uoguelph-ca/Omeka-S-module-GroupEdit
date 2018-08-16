@@ -130,15 +130,22 @@ class Module extends AbstractModule
 
     function handleResourceReadPost(Event $event) {
 
+        $user = $this->getUser();
+        if(!$user) return;
+
+        $user->groupedit_groups = $this->getUserGroups($user);
+
         $response = $event->getParam('response');
         $item = $response->getContent();
         $item->groupedit_groups = $this->getResourceGroups($item);
 
-        $user = $this->getUser();
-        $user->groupedit_groups = $this->getUserGroups($user);
     }
 
     function handleResourceSearchPost(Event $event) {
+        $user = $this->getUser();
+        if(!$user) return;
+
+        $user->groupedit_groups = $this->getUserGroups($user);
 
         $response = $event->getParam('response');
         $items = $response->getContent();
@@ -146,9 +153,6 @@ class Module extends AbstractModule
         foreach ($items as $item) {
             $item->groupedit_groups = $this->getResourceGroups($item);
         }
-
-        $user = $this->getUser();
-        $user->groupedit_groups = $this->getUserGroups($user);
     }
 
     protected function getUser() {
