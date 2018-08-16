@@ -6,7 +6,7 @@ The GroupEdit module is designed to support users who would like to collaborate 
 
 ## Installation
 
-1. Extract the files in your modules directory, and rename module folder "GroupEdit". See general end user documentation for [Installing a module](http://dev.omeka.org/docs/s/user-manual/modules/#installing-modules).
+1. Extract the files in your modules directory, and rename module folder "GroupEdit". See general end user documentation for [installing a module](http://dev.omeka.org/docs/s/user-manual/modules/#installing-modules).
 2. Ensure that the Group module is installed and enabled.
 3. Enable the module. 
 
