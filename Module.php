@@ -37,8 +37,13 @@ use Zend\View\Renderer\PhpRenderer;
  *
  * Users who share the same group now have the ability to edit each other's items.
  *
- * @copyright Daniel Berthereau, 2017-2018
- * @license http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt
+ * The crux of this module is the GroupOwnershipAssertion class, which allows users to edit
+ * resources that share the same group as the user.
+ *
+ * Beyond that, the events added here just populate group data on the $role and $resource variables for that assertion.
+ * This approach seems hacky to me, but it's the easiest way to give the assertion the data it needs to make a decision.
+ *
+ * @copyright Adam Doan, 2018
  */
 class Module extends AbstractModule
 {
@@ -72,10 +77,12 @@ class Module extends AbstractModule
             \Omeka\Permissions\Acl::ROLE_EDITOR
         ];
 
+        /*
+         * These roles are required to allow group membership to propagate down to newly created items and media.
+         */
         $acl->allow(
             $nonAdminRoles,
             [\Group\Entity\GroupResource::class],
-            // The right "assign" is used to display the form or not.
             ['read', 'create', 'update', 'delete', 'assign']
         );
 
@@ -85,13 +92,13 @@ class Module extends AbstractModule
             ['search', 'read']
         );
 
+        // Set up the Group Ownership assertion check for the relevant resources.
         $acl->allow(
             'author',
             [
                 'Omeka\Entity\Item',
                 'Omeka\Entity\ItemSet',
-                'Omeka\Entity\Media',
-                'Omeka\Entity\ResourceTemplate',
+                'Omeka\Entity\Media'
             ],
             [
                 'update',
@@ -101,6 +108,10 @@ class Module extends AbstractModule
         );
     }
 
+    /**
+     * Whenever items, item sets, or media are loaded, we add a small bit of data to the record,
+     * listing the IDs of the groups that they belong to.
+     */
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
     {
         $services = $this->getServiceLocator();
@@ -129,6 +140,12 @@ class Module extends AbstractModule
         }
     }
 
+    /**
+     * Handle the event that's fired whenever a resource is read from the API.
+     * This handler does two things:
+     *  - Injects the group ids into the user object.
+     *  - Injects the group ids into the resource.
+     */
     function handleResourceReadPost(Event $event) {
 
         $user = $this->getUser();
@@ -142,6 +159,12 @@ class Module extends AbstractModule
 
     }
 
+    /**
+     * Handle the event that's fired whenever a search is done through the API.
+     * This handler does two things:
+     *  - Injects the group ids into the user object.
+     *  - Injects the group ids into the resources that are returned by the search operation.
+     */
     function handleResourceSearchPost(Event $event) {
         $user = $this->getUser();
         if(!$user) return;
@@ -156,6 +179,11 @@ class Module extends AbstractModule
         }
     }
 
+    /**
+     * Gets the current user, if there is one.
+     *
+     * @return \Omeka\Entity\User or null if the user is not authenticated.
+     */
     protected function getUser() {
         $services = $this->getServiceLocator();
         $auth = $services->get('Omeka\AuthenticationService');
@@ -164,7 +192,13 @@ class Module extends AbstractModule
         return $user;
     }
 
-    protected function getUserGroups($user) {
+    /**
+     * Given a user, returns an array of group IDs, one for each group the user belongs to.
+     *
+     * @param \Omeka\Entity\User $user
+     * @return array An array of group IDs.
+     */
+    protected function getUserGroups(\Omeka\Entity\User $user) {
         $services = $this->getServiceLocator();
 
         $entityManager = $services->get('Omeka\EntityManager');
@@ -182,7 +216,13 @@ class Module extends AbstractModule
         return $groups;
     }
 
-    protected function getResourceGroups($resource) {
+    /**
+     * Given a resource, returns an array of group IDs, one for each group the resource belongs to.
+     *
+     * @param Resource $resource
+     * @return array
+     */
+    protected function getResourceGroups(\Omeka\Entity\Resource $resource) {
         $services = $this->getServiceLocator();
 
         $entityManager = $services->get('Omeka\EntityManager');

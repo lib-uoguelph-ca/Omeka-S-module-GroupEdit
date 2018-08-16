@@ -7,7 +7,12 @@ use Zend\Permissions\Acl\Assertion\AssertionInterface;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 use Zend\Permissions\Acl\Role\RoleInterface;
 
-
+/**
+ * Class GroupOwnershipAssertion
+ * @package GroupEdit\Permissions\Assertion
+ *
+ * Returns true if the user and resource belong to the same group. Otherwise, returns false.
+ */
 class GroupOwnershipAssertion implements AssertionInterface
 {
     public function assert(Acl $acl, RoleInterface $role = null, ResourceInterface $resource = null, $privilege = null) {
