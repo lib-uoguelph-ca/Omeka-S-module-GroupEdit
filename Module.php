@@ -33,9 +33,9 @@ use Zend\Auth;
 use Zend\View\Renderer\PhpRenderer;
 
 /**
- * Group
+ * GroupEdit
  *
- * Add groups to users and resources to manage the access in a more flexible way.
+ * Users who share the same group now have the ability to edit each other's items.
  *
  * @copyright Daniel Berthereau, 2017-2018
  * @license http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt
