@@ -2,6 +2,7 @@
 namespace GroupEdit;
 
 use Group\Entity\GroupResource;
+use Group\Api\Adapter\GroupAdapter;
 use Group\Entity\GroupUser;
 use Omeka\Entity\Resource;
 use Omeka\Module\AbstractModule;
@@ -13,13 +14,16 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 /**
  * GroupEdit
  *
- * Users who share the same group now have the ability to edit each other's items.
+ * Users who share the same group now have
+ * the ability to edit each other's items.
  *
- * The crux of this module is the GroupOwnershipAssertion class, which allows users to edit
- * resources that share the same group as the user.
+ * The crux of this module is the GroupOwnershipAssertion class
+ * which allows users to edit resources that share the same group as the user.
  *
- * Beyond that, the events added here just populate group data on the $role and $resource variables for that assertion.
- * This approach seems hacky to me, but it's the easiest way to give the assertion the data it needs to make a decision.
+ * Beyond that, the events added here just populate group data on the $role
+ * and $resource variables for that assertion. This approach seems hacky to me,
+ * but it's the easiest way to give the assertion the data it needs to make
+ * a decision. There's probably a more "Zendy" way to do this.
  *
  * @copyright Adam Doan, 2018
  */
@@ -56,21 +60,25 @@ class Module extends AbstractModule
         ];
 
         /*
-         * These roles are required to allow group membership to propagate down to newly created items and media.
+         * These roles are required to allow group membership to propagate
+         * down to newly created items and media.
          */
         $acl->allow(
             $nonAdminRoles,
-            [\Group\Entity\GroupResource::class],
+            [GroupResource::class],
             ['read', 'create', 'update', 'delete', 'assign']
         );
 
         $acl->allow(
             [\Omeka\Permissions\Acl::ROLE_AUTHOR],
-            [\Group\Api\Adapter\GroupAdapter::class],
+            [GroupAdapter::class],
             ['search', 'read']
         );
 
-        // Set up the Group Ownership assertion check for the relevant resources.
+        /*
+         * Set up the Group Ownership assertion check for the
+         * relevant resources.
+         */
         $acl->allow(
             'author',
             [
@@ -82,19 +90,16 @@ class Module extends AbstractModule
                 'update',
                 'delete',
             ],
-            new \GroupEdit\Permissions\Assertion\GroupOwnershipAssertion
+            new Permissions\Assertion\GroupOwnershipAssertion
         );
     }
 
     /**
-     * Whenever items, item sets, or media are loaded, we add a small bit of data to the record,
-     * listing the IDs of the groups that they belong to.
+     * Whenever items, item sets, or media are loaded, we add a small bit
+     * of data to the record, listing the IDs of the groups that they belong to.
      */
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
     {
-        $services = $this->getServiceLocator();
-        $config = $services->get('Config');
-
         $adapters = [
             'Omeka\Api\Adapter\MediaAdapter',
             'Omeka\Api\Adapter\ItemAdapter',
@@ -124,7 +129,8 @@ class Module extends AbstractModule
      *  - Injects the group ids into the user object.
      *  - Injects the group ids into the resource.
      */
-    function handleResourceReadPost(Event $event) {
+    function handleResourceReadPost(Event $event)
+    {
 
         $user = $this->getUser();
         if(!$user) return;
@@ -143,7 +149,8 @@ class Module extends AbstractModule
      *  - Injects the group ids into the user object.
      *  - Injects the group ids into the resources that are returned by the search operation.
      */
-    function handleResourceSearchPost(Event $event) {
+    function handleResourceSearchPost(Event $event)
+    {
         $user = $this->getUser();
         if(!$user) return;
 
@@ -162,7 +169,8 @@ class Module extends AbstractModule
      *
      * @return \Omeka\Entity\User or null if the user is not authenticated.
      */
-    protected function getUser() {
+    protected function getUser()
+    {
         $services = $this->getServiceLocator();
         $auth = $services->get('Omeka\AuthenticationService');
 
@@ -176,7 +184,8 @@ class Module extends AbstractModule
      * @param \Omeka\Entity\User $user
      * @return array An array of group IDs.
      */
-    protected function getUserGroups(\Omeka\Entity\User $user) {
+    protected function getUserGroups(\Omeka\Entity\User $user)
+    {
         $services = $this->getServiceLocator();
 
         $entityManager = $services->get('Omeka\EntityManager');
@@ -195,12 +204,14 @@ class Module extends AbstractModule
     }
 
     /**
-     * Given a resource, returns an array of group IDs, one for each group the resource belongs to.
+     * Given a resource, returns an array of group IDs,
+     * one for each group the resource belongs to.
      *
      * @param Resource $resource
      * @return array
      */
-    protected function getResourceGroups(\Omeka\Entity\Resource $resource) {
+    protected function getResourceGroups(\Omeka\Entity\Resource $resource)
+    {
         $services = $this->getServiceLocator();
 
         $entityManager = $services->get('Omeka\EntityManager');
