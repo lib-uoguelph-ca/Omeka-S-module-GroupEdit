@@ -97,7 +97,7 @@ class Module extends AbstractModule
                 'update',
                 'delete',
             ],
-            new \GroupEdit\Permissions\Assertion\GroupEntityAssertion
+            new \GroupEdit\Permissions\Assertion\GroupOwnershipAssertion
         );
     }
 

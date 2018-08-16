@@ -8,7 +8,7 @@ use Zend\Permissions\Acl\Resource\ResourceInterface;
 use Zend\Permissions\Acl\Role\RoleInterface;
 
 
-class GroupEntityAssertion implements AssertionInterface
+class GroupOwnershipAssertion implements AssertionInterface
 {
     public function assert(Acl $acl, RoleInterface $role = null, ResourceInterface $resource = null, $privilege = null) {
         if (!isset($role->groupedit_groups) || !isset($resource->groupedit_groups)) return false;
