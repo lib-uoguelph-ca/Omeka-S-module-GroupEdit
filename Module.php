@@ -107,6 +107,7 @@ class Module extends AbstractModule
         $config = $services->get('Config');
 
         $adapters = [
+            'Omeka\Api\Adapter\MediaAdapter',
             'Omeka\Api\Adapter\ItemAdapter',
             'Omeka\Api\Adapter\ItemSetAdapter',
         ];
