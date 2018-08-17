@@ -18,7 +18,9 @@ class GroupOwnershipAssertion implements AssertionInterface
 {
     public function assert(Acl $acl, RoleInterface $role = null, ResourceInterface $resource = null, $privilege = null)
     {
-        if (!isset($role->groupedit_groups) || !isset($resource->groupedit_groups)) return false;
+        if (!isset($role->groupedit_groups) || !isset($resource->groupedit_groups)) return;
+
+        if (empty($role->groupedit_groups) || empty($resource->groupedit_groups)) return;
 
         return !empty(array_intersect($role->groupedit_groups, $resource->groupedit_groups));
     }
