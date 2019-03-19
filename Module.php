@@ -101,24 +101,6 @@ class Module extends AbstractModule
             ],
             new Permissions\Assertion\GroupOwnershipAssertion
         );
-
-        /*
-        * Set up the Group Ownership assertion check for the
-        * relevant resources.
-        */
-        $acl->allow(
-            'author',
-            [
-                'Omeka\Entity\Item',
-                'Omeka\Entity\ItemSet',
-                'Omeka\Entity\Media'
-            ],
-            [
-                'update',
-                'delete',
-            ],
-            new \Omeka\Permissions\Assertion\OwnsEntityAssertion
-        );
     }
 
     /**
